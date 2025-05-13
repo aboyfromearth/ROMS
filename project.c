@@ -91,8 +91,33 @@ int Register_New_Order() {
     return 0;
 }
 
-// Function to remove an order (currently not implemented)
 int Remove_Order() {
+
+        int orderNum;
+
+    if (totalOrders == 0) {
+        printf("No orders to remove.\n");
+    }
+
+    printf("Enter the order number to remove (1 to %d): ", totalOrders);
+    scanf("%d", &orderNum);
+
+    if (orderNum < 1 || orderNum > totalOrders) {
+        printf("not a valid number(has to be between 1 and %d)\n", totalOrders);
+    }
+
+
+for (int i = 0; i < totalOrders ; i++) {
+    quantity[i] = quantity[i + 1];
+    hour[i] = hour[i + 1];
+    minute[i] = minute[i + 1];
+    am_pm[i] = am_pm[i + 1];
+    serveHour[i] = serveHour[i + 1];
+    serveMinute[i] = serveMinute[i + 1];
+    serve_am_pm[i] = serve_am_pm[i + 1];
+}
+       printf("Order %d hsa been removed.",orderNum);
+totalOrders--;
 
     return 0;
 }
