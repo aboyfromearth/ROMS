@@ -29,7 +29,7 @@ void Welcome_Message() {
     printf("| - Search and update times\n");
     printf("| - Calculate time taken to serve each order\n");
     printf("==============================================\n");
-    printf("\nPress Enter to start the system...");
+    printf("\nPress Enter to start the system...\n");
     getchar();
 }
 
@@ -37,7 +37,7 @@ void Welcome_Message() {
 int menu() {
     int choice;
 
-    printf("===================================\n");
+    printf("\n\n===================================");
     printf("\n--- Restaurant Management System ---\n");
     printf("===================================\n");
     printf("1. Register New Order\n");
@@ -46,16 +46,24 @@ int menu() {
     printf("4. Search by Order Number\n");
     printf("5. Update Serve or Order Time\n");
     printf("6. Exit\n");
-    printf("Enter your choice: ");
+    printf("\nEnter your choice: ");
     scanf("%d", &choice);
 
     return choice;
 }
 
 
+int check_orders_exist(const char* message) {
+    if (totalOrders == 0) {
+        printf("No orders to %s.\n", message);
+        return 1;
+    }
+    return 0;
+}
+
 int Register_New_Order() {
     if (totalOrders < OrderSize) {
-        printf("===================================\n");
+        printf("\n===================================");
         printf("\n--- Register New Order ---\n");
         printf("===================================\n");
 
@@ -80,23 +88,22 @@ int Register_New_Order() {
         printf("Enter AM or PM for Serve (0 for AM, 1 for PM): ");
         scanf("%d", &serve_am_pm[totalOrders]);
 
-        printf("Order Registered Successfully!\n\n");
+        printf("\nOrder Registered Successfully!\n\n");
 
       
         totalOrders++;
     } else {
-        printf("Order limit reached! Cannot register more orders.\n");
+        printf("\nOrder limit reached! Cannot register more orders.\n");
     }
 
     return 0;
 }
 
 int Remove_Order() {
-
     int orderNum;
 
-    if (totalOrders == 0) {
-        printf("No orders to remove.\n");
+    if (check_orders_exist("remove")) {
+        return 0;
     }
 
     printf("Enter the order number to remove (1 to %d): ", totalOrders);
@@ -104,20 +111,20 @@ int Remove_Order() {
 
     if (orderNum < 1 || orderNum > totalOrders) {
         printf("not a valid number(has to be between 1 and %d)\n", totalOrders);
+        return 0;
     }
 
-
-for (int i = 0; i < totalOrders ; i++) {
-    quantity[i] = quantity[i + 1];
-    hour[i] = hour[i + 1];
-    minute[i] = minute[i + 1];
-    am_pm[i] = am_pm[i + 1];
-    serveHour[i] = serveHour[i + 1];
-    serveMinute[i] = serveMinute[i + 1];
-    serve_am_pm[i] = serve_am_pm[i + 1];
-}
-       printf("Order %d hsa been removed.",orderNum);
-totalOrders--;
+    for (int i = orderNum - 1; i < totalOrders - 1; i++) {
+        quantity[i] = quantity[i + 1];
+        hour[i] = hour[i + 1];
+        minute[i] = minute[i + 1];
+        am_pm[i] = am_pm[i + 1];
+        serveHour[i] = serveHour[i + 1];
+        serveMinute[i] = serveMinute[i + 1];
+        serve_am_pm[i] = serve_am_pm[i + 1];
+    }
+    totalOrders--;
+    printf("Order %d has been removed.\n", orderNum);
 
     return 0;
 }
@@ -141,12 +148,11 @@ int Calculate_Time_Taken(int index) {
 }
 
 int Display_All_Orders() {
-    if (totalOrders == 0) {
-        printf("No orders to display.\n");
+    if (check_orders_exist("display")) {
         return 0;
     }
 
-    printf("===================================\n");
+    printf("\n===================================");
     printf("\n--- All Orders ---\n");
     printf("===================================\n");
 
@@ -156,7 +162,7 @@ int Display_All_Orders() {
 
     for (int i = 0; i < totalOrders; i++) {
         int diffMin = Calculate_Time_Taken(i);
-        printf("| %4d | %8d | %8d |  %02d:%02d %s  |  %02d:%02d %s  | %18d |\n",i + 1,i + 1,quantity[i],hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
+        printf("| %-4d | %-8d | %-8d |  %02d:%02d %s  |  %02d:%02d %s  | %-19d |\n",i + 1,i + 1,quantity[i],hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
         serveHour[i], serveMinute[i], serve_am_pm[i] == 0 ? "AM" : "PM",diffMin);
     }
     printf("-------------------------------------------------------------------------------\n");
@@ -166,12 +172,11 @@ int Display_All_Orders() {
 
 int Search_Order() {
     int orderNum;
-    printf("===================================\n");
+    printf("\n===================================");
     printf("\n--- Search Order ---\n");
     printf("===================================\n");
 
-    if (totalOrders == 0) {
-        printf("No orders to search.\n");
+    if (check_orders_exist("search")) {
         return 0;
     }
 
@@ -198,12 +203,11 @@ int Search_Order() {
 int Update_Time() {
     int orderNum, updateChoice;
 
-    printf("===================================\n");
+    printf("\n===================================");
     printf("\n--- Update Time ---\n");
     printf("===================================\n");
 
-    if (totalOrders == 0) {
-        printf("No orders to update.\n");
+    if (check_orders_exist("update")) {
         return 0;
     }
 
@@ -227,7 +231,7 @@ int Update_Time() {
         scanf("%d", &minute[index]);
         printf("Enter AM or PM (0 for AM, 1 for PM): ");
         scanf("%d", &am_pm[index]);
-        printf("Order time updated.\n");
+        printf("\nOrder time updated.\n");
     }
 
     if (updateChoice == 2 || updateChoice == 3) {
@@ -237,19 +241,19 @@ int Update_Time() {
         scanf("%d", &serveMinute[index]);
         printf("Enter AM or PM (0 for AM, 1 for PM): ");
         scanf("%d", &serve_am_pm[index]);
-        printf("Serve time updated.\n");
+        printf("\nServe time updated.\n");
     }
 
-    printf("\nPress Enter to continue...");
-    getchar(); // To consume leftover newline
-    getchar(); // To wait for user input
+    printf("\nPress Enter to continue...\n");
+    getchar(); 
+    getchar(); 
 
     return 0;
 }
 
 int Exit_System() {
 
-    printf("Exiting the system...\n");
+    printf("\n\nThanks for using the Restaurant Management System!\n\n");
     return 0;
 }
 
