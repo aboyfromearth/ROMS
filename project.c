@@ -2,15 +2,13 @@
 
 #define OrderSize 100
 
-
-int quantity[OrderSize];
-int hour[OrderSize];
-int minute[OrderSize];
-int am_pm[OrderSize];
-int serveHour[OrderSize];
-int serveMinute[OrderSize];
-int serve_am_pm[OrderSize];
-
+int *quantity;
+int *hour;
+int *minute;
+int *am_pm;
+int *serveHour;
+int *serveMinute;
+int *serve_am_pm;
 
 int totalOrders = 0;
 
@@ -33,7 +31,6 @@ void Welcome_Message() {
     getchar();
 }
 
-
 int menu() {
     int choice;
 
@@ -52,8 +49,7 @@ int menu() {
     return choice;
 }
 
-
-int check_orders_exist(const char* message) {
+int check_orders_exist(const char *message) {
     if (totalOrders == 0) {
         printf("No orders to %s.\n", message);
         return 1;
@@ -90,7 +86,6 @@ int Register_New_Order() {
 
         printf("\nOrder Registered Successfully!\n\n");
 
-      
         totalOrders++;
     } else {
         printf("\nOrder limit reached! Cannot register more orders.\n");
@@ -130,7 +125,7 @@ int Remove_Order() {
 }
 
 int Calculate_Time_Taken(int index) {
-        int orderTimeInMinutes = (hour[index] % 12) * 60 + minute[index];
+    int orderTimeInMinutes = (hour[index] % 12) * 60 + minute[index];
     if (am_pm[index] == 1) {
         orderTimeInMinutes += 12 * 60;
     }
@@ -140,9 +135,9 @@ int Calculate_Time_Taken(int index) {
         serveTimeInMinutes += 12 * 60;
     }
 
-    int diff= serveTimeInMinutes - orderTimeInMinutes;
+    int diff = serveTimeInMinutes - orderTimeInMinutes;
     if (diff < 0) {
-        diff += 24 * 60; //adding 24 hours so the order is placed for the next day and not today
+        diff += 24 * 60;
     }
     return diff;
 }
@@ -162,8 +157,9 @@ int Display_All_Orders() {
 
     for (int i = 0; i < totalOrders; i++) {
         int diffMin = Calculate_Time_Taken(i);
-        printf("| %-4d | %-8d | %-8d |  %02d:%02d %s  |  %02d:%02d %s  | %-19d |\n",i + 1,i + 1,quantity[i],hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
-        serveHour[i], serveMinute[i], serve_am_pm[i] == 0 ? "AM" : "PM",diffMin);
+        printf("| %-4d | %-8d | %-8d |  %02d:%02d %s  |  %02d:%02d %s  | %-19d |\n",
+               i + 1, i + 1, quantity[i], hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
+               serveHour[i], serveMinute[i], serve_am_pm[i] == 0 ? "AM" : "PM", diffMin);
     }
     printf("-------------------------------------------------------------------------------\n");
 
@@ -252,7 +248,6 @@ int Update_Time() {
 }
 
 int Exit_System() {
-
     printf("\n\nThanks for using the Restaurant Management System!\n\n");
     return 0;
 }
@@ -260,10 +255,20 @@ int Exit_System() {
 int main() {
     int choice;
 
+    static int _quantity[OrderSize], _hour[OrderSize], _minute[OrderSize], _am_pm[OrderSize];
+    static int _serveHour[OrderSize], _serveMinute[OrderSize], _serve_am_pm[OrderSize];
+
+    quantity = _quantity;
+    hour = _hour;
+    minute = _minute;
+    am_pm = _am_pm;
+    serveHour = _serveHour;
+    serveMinute = _serveMinute;
+    serve_am_pm = _serve_am_pm;
+
     Welcome_Message();
 
     while (1) {
-
         choice = menu();
 
         switch (choice) {
@@ -285,9 +290,7 @@ int main() {
             case 6:
                 Exit_System();
                 return 0;
-
             default:
-               
                 printf("Invalid choice! Please try again.\n");
         }
     }
