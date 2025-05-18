@@ -2,34 +2,27 @@
 
 #define OrderSize 100
 
-
-int quantity[OrderSize];
-int hour[OrderSize];
-int minute[OrderSize];
-int am_pm[OrderSize];
-int serveHour[OrderSize];
-int serveMinute[OrderSize];
-int serve_am_pm[OrderSize];
-
-
-int totalOrders = 0;
+//removed global ptr
 
 void Welcome_Message() {
-    printf("==============================================\n");
-    printf("|      RESTAURANT ORDER MANAGEMENT SYSTEM     |\n");
-    printf("==============================================\n");
-    printf("| Welcome to the Restaurant Order Management System!\n");
-    printf("| -> Developed by: Department of CSE\n");
-    printf("| -> Semester: Spring 2025\n");
-    printf("|\n");
-    printf("| This system allows you to:\n");
-    printf("| - Register new orders\n");
-    printf("| - Remove existing orders\n");
-    printf("| - Display all orders\n");
-    printf("| - Search and update times\n");
-    printf("| - Calculate time taken to serve each order\n");
-    printf("==============================================\n");
-    printf("\nPress Enter to start the system...\n");
+    printf("==============================================================\n");
+    printf("|         RESTAURANT ORDER MANAGEMENT SYSTEM (ROMS)          |\n");
+    printf("==============================================================\n");
+    printf("|                                                            |\n");
+    printf("| Welcome to the Restaurant Order Management System!         |\n");
+    printf("|                                                            |\n");
+    printf("| -> Developed by: Department of CSE                         |\n");
+    printf("| -> Semester: Spring 2025                                   |\n");
+    printf("|                                                            |\n");
+    printf("| This system allows you to:                                 |\n");
+    printf("|  - Register new orders                                     |\n");
+    printf("|  - Remove existing orders                                  |\n");
+    printf("|  - Display all orders                                      |\n");
+    printf("|  - Search and update times                                 |\n");
+    printf("|  - Calculate time taken to serve each order                |\n");
+    printf("|                                                            |\n");
+    printf("==============================================================\n");
+    printf("\n             Press Enter to start the system... ");
     getchar();
 }
 
@@ -52,69 +45,65 @@ int menu() {
     return choice;
 }
 
-
-int check_orders_exist(const char* message) {
+int check_orders_exist(int totalOrders, const char *message) {
     if (totalOrders == 0) {
-        printf("No orders to %s.\n", message);
+        printf("\nNo orders to %s.\n", message);
         return 1;
     }
     return 0;
 }
-
-int Register_New_Order() {
-    if (totalOrders < OrderSize) {
+                                           // directly passing the pointer as parameter
+void Register_New_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int *totalOrders) {
+    if (*totalOrders < OrderSize) {
         printf("\n===================================");
         printf("\n--- Register New Order ---\n");
         printf("===================================\n");
 
         printf("Enter Quantity of Food Items: ");
-        scanf("%d", &quantity[totalOrders]);
+        scanf("%d", &quantity[*totalOrders]);
 
         printf("Enter Hour: ");
-        scanf("%d", &hour[totalOrders]);
+        scanf("%d", &hour[*totalOrders]);
 
         printf("Enter Minute: ");
-        scanf("%d", &minute[totalOrders]);
+        scanf("%d", &minute[*totalOrders]);
 
         printf("Enter AM or PM (0 for AM, 1 for PM): ");
-        scanf("%d", &am_pm[totalOrders]); 
+        scanf("%d", &am_pm[*totalOrders]);
 
         printf("Enter Serve Hour: ");
-        scanf("%d", &serveHour[totalOrders]);
+        scanf("%d", &serveHour[*totalOrders]);
 
         printf("Enter Serve Minute: ");
-        scanf("%d", &serveMinute[totalOrders]);
+        scanf("%d", &serveMinute[*totalOrders]);
 
         printf("Enter AM or PM for Serve (0 for AM, 1 for PM): ");
-        scanf("%d", &serve_am_pm[totalOrders]);
+        scanf("%d", &serve_am_pm[*totalOrders]);
 
         printf("\nOrder Registered Successfully!\n\n");
 
-      
-        totalOrders++;
+        (*totalOrders)++;
     } else {
         printf("\nOrder limit reached! Cannot register more orders.\n");
     }
-
-    return 0;
 }
 
-int Remove_Order() {
+void Remove_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int *totalOrders) {
     int orderNum;
 
-    if (check_orders_exist("remove")) {
-        return 0;
+    if (check_orders_exist(*totalOrders, "remove")) {
+        return;
     }
 
-    printf("Enter the order number to remove (1 to %d): ", totalOrders);
+    printf("\nEnter the order number to remove (1 to %d): ", *totalOrders);
     scanf("%d", &orderNum);
 
-    if (orderNum < 1 || orderNum > totalOrders) {
-        printf("not a valid number(has to be between 1 and %d)\n", totalOrders);
-        return 0;
+    if (orderNum < 1 || orderNum > *totalOrders) {
+        printf("\nNot a valid number (has to be between 1 and %d)\n", *totalOrders);
+        return;
     }
 
-    for (int i = orderNum - 1; i < totalOrders - 1; i++) {
+    for (int i = orderNum - 1; i < *totalOrders - 1; i++) {
         quantity[i] = quantity[i + 1];
         hour[i] = hour[i + 1];
         minute[i] = minute[i + 1];
@@ -123,14 +112,13 @@ int Remove_Order() {
         serveMinute[i] = serveMinute[i + 1];
         serve_am_pm[i] = serve_am_pm[i + 1];
     }
-    totalOrders--;
-    printf("Order %d has been removed.\n", orderNum);
-
-    return 0;
+    (*totalOrders)--;
+    printf("\nOrder %d has been removed.\n", orderNum);
 }
 
-int Calculate_Time_Taken(int index) {
-        int orderTimeInMinutes = (hour[index] % 12) * 60 + minute[index];
+int Calculate_Time_Taken(int index, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm) {
+    
+    int orderTimeInMinutes = (hour[index] % 12) * 60 + minute[index];
     if (am_pm[index] == 1) {
         orderTimeInMinutes += 12 * 60;
     }
@@ -140,16 +128,17 @@ int Calculate_Time_Taken(int index) {
         serveTimeInMinutes += 12 * 60;
     }
 
-    int diff= serveTimeInMinutes - orderTimeInMinutes;
+    int diff = serveTimeInMinutes - orderTimeInMinutes;
     if (diff < 0) {
-        diff += 24 * 60; //adding 24 hours so the order is placed for the next day and not today
+        diff += 24 * 60;
     }
     return diff;
 }
 
-int Display_All_Orders() {
-    if (check_orders_exist("display")) {
-        return 0;
+void Display_All_Orders(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int totalOrders) {
+    
+    if (check_orders_exist(totalOrders, "display")) {
+        return;
     }
 
     printf("\n===================================");
@@ -161,23 +150,22 @@ int Display_All_Orders() {
     printf("-------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < totalOrders; i++) {
-        int diffMin = Calculate_Time_Taken(i);
-        printf("| %-4d | %-8d | %-8d |  %02d:%02d %s  |  %02d:%02d %s  | %-19d |\n",i + 1,i + 1,quantity[i],hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
-        serveHour[i], serveMinute[i], serve_am_pm[i] == 0 ? "AM" : "PM",diffMin);
+        int diffMin = Calculate_Time_Taken(i, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm);
+        printf("| %-4d | %-8d | %-8d |  %02d:%02d %s  |  %02d:%02d %s  | %-19d |\n",
+               i + 1, i + 1, quantity[i], hour[i], minute[i], am_pm[i] == 0 ? "AM" : "PM",
+               serveHour[i], serveMinute[i], serve_am_pm[i] == 0 ? "AM" : "PM", diffMin);
     }
     printf("-------------------------------------------------------------------------------\n");
-
-    return 0;
 }
 
-int Search_Order() {
+void Search_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int totalOrders) {
     int orderNum;
     printf("\n===================================");
     printf("\n--- Search Order ---\n");
     printf("===================================\n");
 
-    if (check_orders_exist("search")) {
-        return 0;
+    if (check_orders_exist(totalOrders, "search")) {
+        return;
     }
 
     printf("Enter Order Number: ");
@@ -185,7 +173,7 @@ int Search_Order() {
 
     if (orderNum < 1 || orderNum > totalOrders) {
         printf("Order not found.\n");
-        return 0;
+        return;
     }
 
     int index = orderNum - 1;
@@ -194,21 +182,19 @@ int Search_Order() {
     printf("Order Time: %02d:%02d %s\n", hour[index], minute[index], am_pm[index] == 0 ? "AM" : "PM");
     printf("Serve Time: %02d:%02d %s\n", serveHour[index], serveMinute[index], serve_am_pm[index] == 0 ? "AM" : "PM");
 
-    int diffMin = Calculate_Time_Taken(index);
+    int diffMin = Calculate_Time_Taken(index, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm);
     printf("Time taken to serve: %d minute(s)\n", diffMin);
-
-    return 0;
 }
 
-int Update_Time() {
+void Update_Time(int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int totalOrders) {
     int orderNum, updateChoice;
 
     printf("\n===================================");
     printf("\n--- Update Time ---\n");
     printf("===================================\n");
 
-    if (check_orders_exist("update")) {
-        return 0;
+    if (check_orders_exist(totalOrders, "update")) {
+        return;
     }
 
     printf("Enter Order Number to update: ");
@@ -216,7 +202,7 @@ int Update_Time() {
 
     if (orderNum < 1 || orderNum > totalOrders) {
         printf("Order not found.\n");
-        return 0;
+        return;
     }
 
     int index = orderNum - 1;
@@ -245,49 +231,46 @@ int Update_Time() {
     }
 
     printf("\nPress Enter to continue...\n");
-    getchar(); 
-    getchar(); 
-
-    return 0;
+    getchar();
+    getchar();
 }
 
-int Exit_System() {
-
+void Exit_System() {
     printf("\n\nThanks for using the Restaurant Management System!\n\n");
-    return 0;
 }
 
 int main() {
     int choice;
 
+    int quantity[OrderSize], hour[OrderSize], minute[OrderSize], am_pm[OrderSize];
+    int serveHour[OrderSize], serveMinute[OrderSize], serve_am_pm[OrderSize];
+    int totalOrders = 0;
+
     Welcome_Message();
 
     while (1) {
-
         choice = menu();
 
-        switch (choice) {
+        switch (choice) {                                    //directly passing as parameter
             case 1:
-                Register_New_Order();
+                Register_New_Order(quantity, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, &totalOrders);
                 break;
             case 2:
-                Remove_Order();
+                Remove_Order(quantity, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, &totalOrders);
                 break;
             case 3:
-                Display_All_Orders();
+                Display_All_Orders(quantity, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, totalOrders);
                 break;
             case 4:
-                Search_Order();
+                Search_Order(quantity, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, totalOrders);
                 break;
             case 5:
-                Update_Time();
+                Update_Time(hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, totalOrders);
                 break;
             case 6:
                 Exit_System();
                 return 0;
-
             default:
-               
                 printf("Invalid choice! Please try again.\n");
         }
     }
