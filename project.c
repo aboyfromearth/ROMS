@@ -15,22 +15,29 @@ int serve_am_pm[OrderSize];
 int totalOrders = 0;
 
 void Welcome_Message() {
-    printf("==============================================\n");
-    printf("|      RESTAURANT ORDER MANAGEMENT SYSTEM     |\n");
-    printf("==============================================\n");
-    printf("| Welcome to the Restaurant Order Management System!\n");
-    printf("| -> Developed by: Department of CSE\n");
-    printf("| -> Semester: Spring 2025\n");
-    printf("|\n");
-    printf("| This system allows you to:\n");
-    printf("| - Register new orders\n");
-    printf("| - Remove existing orders\n");
-    printf("| - Display all orders\n");
-    printf("| - Search and update times\n");
-    printf("| - Calculate time taken to serve each order\n");
-    printf("==============================================\n");
-    printf("\nPress Enter to start the system...\n");
-    getchar();
+    printf("\n");
+    printf("  =============================================================\n");
+    printf("  |                                                          |\n");
+    printf("  |         RESTAURANT ORDER MANAGEMENT SYSTEM (ROMS)        |\n");
+    printf("  |                                                          |\n");
+    printf("  =============================================================\n");
+    printf("  |                                                          |\n");
+    printf("  |  Welcome to the Restaurant Order Management System!      |\n");
+    printf("  |                                                          |\n");
+    printf("  |  -> Developed by: Department of CSE                      |\n");
+    printf("  |  -> Semester: Spring 2025                                |\n");
+    printf("  |                                                          |\n");
+    printf("  |  This system allows you to:                              |\n");
+    printf("  |   - Register new orders                                  |\n");
+    printf("  |   - Remove existing orders                               |\n");
+    printf("  |   - Display all orders                                   |\n");
+    printf("  |   - Search and update times                              |\n");
+    printf("  |   - Calculate time taken to serve each order             |\n");
+    printf("  |                                                          |\n");
+    printf("  =============================================================\n");
+    printf("\n  Press Enter to start the system...");
+
+    getch();
 }
 
 
