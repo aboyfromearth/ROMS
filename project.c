@@ -2,7 +2,12 @@
 
 #define OrderSize 100
 
-//removed global ptr
+int is_ValidTime(int hour, int minute, int am_pm) {
+    if (hour < 1 || hour > 12 || minute < 0 || minute > 59 || (am_pm != 0 && am_pm != 1)) {
+        return 0;
+    }
+    return 1;
+}
 
 void Welcome_Message() {
     printf("==============================================================\n");
@@ -45,15 +50,23 @@ int menu() {
     return choice;
 }
 
-int check_orders_exist(int totalOrders, const char *message) {
+int is_OrderID_Exists(int totalOrders, const char *message) {
     if (totalOrders == 0) {
         printf("\nNo orders to %s.\n", message);
         return 1;
     }
     return 0;
 }
-                                           // directly passing the pointer as parameter
-void Register_New_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int *totalOrders) {
+
+int is_Validtime(int hour, int minute, int am_pm) {
+    if (hour < 1 || hour > 12 || minute < 0 || minute > 59 || (am_pm != 0 && am_pm != 1)) {
+        return 0;
+    }
+    return 1;
+}
+
+                                        
+void Register_New_Order(int *quantity, int *hour, int *minute, int *am_pm, int *serveHour, int *serveMinute, int *serve_am_pm, int *totalOrders) {
     if (*totalOrders < OrderSize) {
         printf("\n===================================");
         printf("\n--- Register New Order ---\n");
@@ -62,26 +75,33 @@ void Register_New_Order(int *quantity, int *hour, int *minute, int *am_pm,int *s
         printf("Enter Quantity of Food Items: ");
         scanf("%d", &quantity[*totalOrders]);
 
-        printf("Enter Hour: ");
-        scanf("%d", &hour[*totalOrders]);
+        
+        do {
+            printf("Enter Hour: ");
+            scanf("%d", &hour[*totalOrders]);
+            printf("Enter Minute: ");
+            scanf("%d", &minute[*totalOrders]);
+            printf("Enter AM or PM (0 for AM, 1 for PM): ");
+            scanf("%d", &am_pm[*totalOrders]);
+            if (!is_ValidTime(hour[*totalOrders], minute[*totalOrders], am_pm[*totalOrders])) {
+                printf("\nNot a valid order time! please re-enter a valid time\n");
+            }
+        } while (!is_ValidTime(hour[*totalOrders], minute[*totalOrders], am_pm[*totalOrders]));
 
-        printf("Enter Minute: ");
-        scanf("%d", &minute[*totalOrders]);
-
-        printf("Enter AM or PM (0 for AM, 1 for PM): ");
-        scanf("%d", &am_pm[*totalOrders]);
-
-        printf("Enter Serve Hour: ");
-        scanf("%d", &serveHour[*totalOrders]);
-
-        printf("Enter Serve Minute: ");
-        scanf("%d", &serveMinute[*totalOrders]);
-
-        printf("Enter AM or PM for Serve (0 for AM, 1 for PM): ");
-        scanf("%d", &serve_am_pm[*totalOrders]);
+        
+        do {
+            printf("Enter Serve Hour: ");
+            scanf("%d", &serveHour[*totalOrders]);
+            printf("Enter Serve Minute: ");
+            scanf("%d", &serveMinute[*totalOrders]);
+            printf("Enter AM or PM for Serve (0 for AM, 1 for PM): ");
+            scanf("%d", &serve_am_pm[*totalOrders]);
+            if (!is_ValidTime(serveHour[*totalOrders], serveMinute[*totalOrders], serve_am_pm[*totalOrders])) {
+                printf("\nNot a valid order time! please re-enter a valid time\n");
+            }
+        } while (!is_ValidTime(serveHour[*totalOrders], serveMinute[*totalOrders], serve_am_pm[*totalOrders]));
 
         printf("\nOrder Registered Successfully!\n\n");
-
         (*totalOrders)++;
     } else {
         printf("\nOrder limit reached! Cannot register more orders.\n");
@@ -91,7 +111,7 @@ void Register_New_Order(int *quantity, int *hour, int *minute, int *am_pm,int *s
 void Remove_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int *totalOrders) {
     int orderNum;
 
-    if (check_orders_exist(*totalOrders, "remove")) {
+    if (is_OrderID_Exists(*totalOrders, "remove")) {
         return;
     }
 
@@ -137,7 +157,7 @@ int Calculate_Time_Taken(int index, int *hour, int *minute, int *am_pm,int *serv
 
 void Display_All_Orders(int *quantity, int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int totalOrders) {
     
-    if (check_orders_exist(totalOrders, "display")) {
+    if (is_OrderID_Exists(totalOrders, "display")) {
         return;
     }
 
@@ -164,7 +184,7 @@ void Search_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHo
     printf("\n--- Search Order ---\n");
     printf("===================================\n");
 
-    if (check_orders_exist(totalOrders, "search")) {
+    if (is_OrderID_Exists(totalOrders, "search")) {
         return;
     }
 
@@ -186,14 +206,14 @@ void Search_Order(int *quantity, int *hour, int *minute, int *am_pm,int *serveHo
     printf("Time taken to serve: %d minute(s)\n", diffMin);
 }
 
-void Update_Time(int *hour, int *minute, int *am_pm,int *serveHour, int *serveMinute, int *serve_am_pm,int totalOrders) {
+void Update_Time(int *hour, int *minute, int *am_pm, int *serveHour, int *serveMinute, int *serve_am_pm, int totalOrders) {
     int orderNum, updateChoice;
 
     printf("\n===================================");
     printf("\n--- Update Time ---\n");
     printf("===================================\n");
 
-    if (check_orders_exist(totalOrders, "update")) {
+    if (is_OrderID_Exists(totalOrders, "update")) {
         return;
     }
 
@@ -211,22 +231,32 @@ void Update_Time(int *hour, int *minute, int *am_pm,int *serveHour, int *serveMi
     scanf("%d", &updateChoice);
 
     if (updateChoice == 1 || updateChoice == 3) {
-        printf("Enter New Order Hour: ");
-        scanf("%d", &hour[index]);
-        printf("Enter New Order Minute: ");
-        scanf("%d", &minute[index]);
-        printf("Enter AM or PM (0 for AM, 1 for PM): ");
-        scanf("%d", &am_pm[index]);
+        do {
+            printf("Enter New Order Hour: ");
+            scanf("%d", &hour[index]);
+            printf("Enter New Order Minute: ");
+            scanf("%d", &minute[index]);
+            printf("Enter AM or PM (0 for AM, 1 for PM): ");
+            scanf("%d", &am_pm[index]);
+            if (!is_ValidTime(hour[index], minute[index], am_pm[index])) {
+                printf("Invalid order time! Please re-enter.\n");
+            }
+        } while (!is_ValidTime(hour[index], minute[index], am_pm[index]));
         printf("\nOrder time updated.\n");
     }
 
     if (updateChoice == 2 || updateChoice == 3) {
-        printf("Enter New Serve Hour: ");
-        scanf("%d", &serveHour[index]);
-        printf("Enter New Serve Minute: ");
-        scanf("%d", &serveMinute[index]);
-        printf("Enter AM or PM (0 for AM, 1 for PM): ");
-        scanf("%d", &serve_am_pm[index]);
+        do {
+            printf("Enter New Serve Hour: ");
+            scanf("%d", &serveHour[index]);
+            printf("Enter New Serve Minute: ");
+            scanf("%d", &serveMinute[index]);
+            printf("Enter AM or PM (0 for AM, 1 for PM): ");
+            scanf("%d", &serve_am_pm[index]);
+            if (!is_ValidTime(serveHour[index], serveMinute[index], serve_am_pm[index])) {
+                printf("Invalid serve time! Please re-enter.\n");
+            }
+        } while (!is_ValidTime(serveHour[index], serveMinute[index], serve_am_pm[index]));
         printf("\nServe time updated.\n");
     }
 
@@ -251,7 +281,7 @@ int main() {
     while (1) {
         choice = menu();
 
-        switch (choice) {                                    //directly passing as parameter
+        switch (choice) {                                   
             case 1:
                 Register_New_Order(quantity, hour, minute, am_pm, serveHour, serveMinute, serve_am_pm, &totalOrders);
                 break;
